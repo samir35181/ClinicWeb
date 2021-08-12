@@ -1,0 +1,111 @@
+{% extends 'catalog/layout.html' %}
+
+{% block content %}
+       <div class="card card-primary card-outline">
+              <!-- Tabla de Pacientes -->
+             <div class="container">
+            <div class="row mb-3 mt-3">
+                <div class="col-4">
+                    <button type="button" class="btn btn-primary" onclick="IrFormularioCrear()">Crear Nuevo</button>
+                </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellido Paterno</th>
+                        <th scope="col">Apellido Materno</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Dirección </th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col">Genero</th>
+                        <th scope="col">Fecha de nacimiento </th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">Peso </th>
+                        <th scope="col">Acción</th>
+                      
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+          </div>
+
+
+
+
+<!-- jQuery -->
+<script>
+        window.onload = function() {
+            Obtener();
+        };
+
+        function IrFormularioCrear(){
+            window.location = "{% url 'insertar' %}";
+        }
+
+        function Obtener(){
+
+            $(".table tbody").html("");
+
+            $.getJSON("http://localhost/WebServicePacientes/post.php").done(function(response){
+                console.log(response);
+                $.each( response, function( id, fila ) {
+                   $("<tr>").append(
+                        $("<td>").text(fila.id),
+                        $("<td>").text(fila.nombre),
+                        $("<td>").text(fila.apepaterno),
+                        $("<td>").text(fila.apematerno),
+                        $("<td>").text(fila.edad),
+                        $("<td>").text(fila.direccion),
+                         $("<td>").text(fila.telefono),
+                          $("<td>").text(fila.genero),
+                        $("<td>").text(fila.fecha_nacimiento),
+                         $("<td>").text(fila.usuario),
+                        $("<td>").text(fila.pass),
+                        $("<td>").text(fila.peso),
+                        $("<td>").append(
+                            $("<button>").data("id",fila.id).addClass("btn btn-success btn-sm mr-1 editar").text("Editar").attr({"type":"button"}),
+                           $("<button>").data("id",fila.id).addClass("btn btn-danger btn-sm eliminar").text("Eliminar").attr({"type":"button"})
+                        )
+                    ).appendTo(".table");
+                });
+            });
+        }
+
+        $(document).on('click', '.editar', function () {
+            console.log($(this).data("id"));
+            window.location = "Registro.html?id=" + $(this).data("id");
+            
+        });
+
+
+        $(document).on('click', '.eliminar', function () {
+            console.log($(this).data("id"));
+
+            
+        fetch('http://localhost/WebServicePacientes/post.php?id='+ $(this).data("id"),{
+         method:'DELETE'
+        }).then(function(response){
+            if(response){
+                    Obtener();
+                }else{
+                    alert("Error al eliminar")
+                }
+        });
+          
+            
+        });
+
+
+    </script>
+
+     
+{% endblock %}  

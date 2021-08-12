@@ -1,0 +1,178 @@
+{% extends 'catalog/layout.html' %}
+
+{% block content %}
+<div class="card card-primary card-outline">
+<div class="container">
+
+            <div class="row mt-3">
+              <div class="col-12">
+                <form>
+                    <input type="hidden" id="txtid"/>
+                    <div class="form-group">
+                      <label for="exampleInputEmail1">Nombre</label>
+                      <input type="text" class="form-control" id="txtnombre" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="txtapepaterno" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Apellido Materno</label>
+                        <input type="text" class="form-control" id="txtapematerno" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Edad</label>
+                        <input type="text" class="form-control" id="txtedad" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Dirección </label>
+                        <input type="text" class="form-control" id="txtdireccion" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Telefono</label>
+                        <input type="text" class="form-control" id="txttelefono" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Genero </label>
+                        <input type="text" class="form-control" id="txtgenero" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" id="txtfecha_nacimiento" placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Usuario </label>
+                        <input type="text" class="form-control" id="txtusuario" placeholder="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Contraseña</label>
+                        <input type="password"  class="form-control" id="txtpass"  placeholder="" minlength="8" required/>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Peso </label>
+                        <input type="number" class="form-control" id="txtpeso" min="1" step="any" placeholder="">
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="GuardarUsuario()">Guardar</button>
+                    <button type="button" class="btn btn-warning" onclick="IrFormularioInicio()">Volver</button>
+                  </form>
+              </div>
+            </div>
+          </div>
+
+           <script>
+        var editar = false;
+        window.onload = function () {
+            var id = $.urlParam('id');
+            console.log(id);
+            if (id != null) {
+                editar = true;
+                $("#txtid").val(id);
+                PintarUsuario(id);
+            }
+        };
+
+        $.urlParam = function (name) {
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) {
+                return null;
+            }
+            return decodeURI(results[1]) || 0;
+        }
+
+        function IrFormularioInicio() {
+            window.location = "{% url 'index' %}";
+        }
+
+        function PintarUsuario(id) {
+
+            $.get("http://localhost/WebServicePacientes/post.php?id=" + id)
+                .done(function (response) {
+                    //console.log(response['id']);
+                   // response.forEach( function( col, fila ) {
+                      
+                  //  console.log(fila.pelicula);
+
+                    $("#txtnombre").val(response.nombre),
+                        $("#txtapepaterno").val(response.apepaterno),
+                        $("#txtapematerno").val(response.apematerno),
+                        $("#txtedad").val(response.edad),
+                        $("#txtdireccion").val(response.direccion),
+                        $("#txttelefono").val(response.telefono),
+                        $("#txtgenero").val(response.genero),
+                        $("#txtfecha_nacimiento").val(response.fecha_nacimiento),
+                        $("#txtusuario").val(response.usuario),
+                        $("#txtpass").val(response.pass),
+                        $("#txtpeso").val(response.peso)
+                   // });     
+                });
+        }
+
+
+        function GuardarUsuario() {
+            if (editar) {
+
+                var data = {
+                    id: $("#txtid").val(),
+                    nombre: $("#txtnombre").val(),
+                    apepaterno: $("#txtapepaterno").val(),
+                    apematerno: $("#txtapematerno").val(),
+                    edad: $("#txtedad").val(),
+                    direccion: $("#txtdireccion").val(),
+                    telefono: $("#txttelefono").val(),
+                    genero: $("#txtgenero").val(),
+                    fecha_nacimiento: $("#txtfecha_nacimiento").val(),
+                    usuario: $("#txtusuario").val()
+                    pass: $("#txtpass").val(),
+                    peso: $("#txtpeso").val()
+                }
+                console.log(data);
+                fetch('http://localhost/WebServicePacientes/post.php', {
+                    method: 'PUT',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(function (data) {
+                    if (data) {
+                        alert("Se guardaron los cambios");
+                        window.location = "{% url 'index' %}";
+                    } else {
+                        alert("Error al Modificar")
+                    }
+                });
+
+
+            } else {
+
+                var data = {
+                    nombre: $("#txtnombre").val(),
+                    apepaterno: $("#txtapepaterno").val(),
+                    apematerno: $("#txtapematerno").val(),
+                    edad: $("#txtedad").val(),
+                    direccion: $("#txtdireccion").val(),
+                    telefono: $("#txttelefono").val(),
+                    genero: $("#txtgenero").val(),
+                    fecha_nacimiento: $("#txtfecha_nacimiento").val(),
+                    usuario: $("#txtusuario").val(),
+                    pass: $("#txtpass").val(),
+                    peso: $("#txtpeso").val()
+                }
+
+                $.post("http://localhost/WebServicePacientes/post.php", data)
+                    .done(function (data) {
+                        console.log(data);
+                        if (data) {
+                            alert("Usuario Creado");
+                            window.location = "{% url 'index' %}";
+                        } else {
+                            alert("Error al crear");
+                        }
+                    });
+            }
+
+        }
+
+
+
+    </script>
+{% endblock %}  

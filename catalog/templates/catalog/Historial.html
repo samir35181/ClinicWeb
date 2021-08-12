@@ -1,0 +1,81 @@
+{% extends 'catalog/layout.html' %}
+
+{% block content %}
+<div class="card card-primary card-outline">
+	<div class="card card-primary card-outline">
+              <!-- Tabla de Pacientes -->
+             <div class="container">
+            
+
+            <div class="row">
+              <div class="col-12">
+                <table class="table table-striped">
+                    <thead>
+                      <tr>
+                       
+                        <th scope="col">Paciente</th>
+                        <th scope="col">Peso</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Genero</th>
+                        <th scope="col">Tipo de Medición </th>
+                        <th scope="col">Valor</th>
+                        <th scope="col">Hora</th>
+                        <th scope="col">Fecha de Diagnostico</th>
+                        <th scope="col">Duración</th>
+                       
+                        
+                      
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+          </div>
+
+
+
+
+<!-- jQuery -->
+<script>
+        window.onload = function() {
+            Obtener();
+        };
+
+        
+
+        function Obtener(){
+
+            $(".table tbody").html("");
+
+            $.getJSON("http://localhost/WebServiceSignosVitales/post.php").done(function(response){
+                console.log(response);
+                $.each( response, function( id, fila ) {
+                   $("<tr>").append(
+                       
+                        $("<td>").text(fila.paciente),
+                        $("<td>").text(fila.peso),
+                        $("<td>").text(fila.edad),
+                        $("<td>").text(fila.genero),
+                        $("<td>").text(fila.tipo_medicion),
+                         $("<td>").text(fila.valor),
+                          $("<td>").text(fila.hora),
+                        $("<td>").text(fila.fecha),
+                         $("<td>").text(fila.duracion)
+                        
+                    ).appendTo(".table");
+                });
+            });
+        }
+
+       
+          
+            
+        
+
+
+    </script>
+
+
+{% endblock %}  
