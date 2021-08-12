@@ -1,2 +1,2 @@
-# Integradora9W
+# ClinicWeb
 ("Monitoreo de signos vitales")
